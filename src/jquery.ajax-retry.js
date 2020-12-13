@@ -18,20 +18,7 @@
     }
 })(function($) {
 
-  // enhance all ajax requests with our retry API
-  $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
-    jqXHR.retry = function(opts) {
-      if(opts.timeout) {
-        this.timeout = opts.timeout;
-      }
-      if (opts.statusCodes) {
-        this.statusCodes = opts.statusCodes;
-      }
-      return this.pipe(null, pipeFailRetry(this, opts));
-    };
-  });
-
-  // generates a fail pipe function that will retry `jqXHR` `times` more times
+ // generates a fail pipe function that will retry `jqXHR` `times` more times
   function pipeFailRetry(jqXHR, opts) {
     var times = opts.times;
     var timeout = jqXHR.timeout;
@@ -79,5 +66,18 @@
       return output;
     };
   }
+
+  // enhance all ajax requests with our retry API
+  $.ajaxPrefilter(function(options, originalOptions, jqXHR) {
+    jqXHR.retry = function(opts) {
+      if(opts.timeout) {
+        this.timeout = opts.timeout;
+      }
+      if (opts.statusCodes) {
+        this.statusCodes = opts.statusCodes;
+      }
+      return this.pipe(null, pipeFailRetry(this, opts));
+    };
+  });
 
 });
