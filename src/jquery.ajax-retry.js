@@ -17,11 +17,12 @@
       factory(jQuery);
     }
 })(function($) {
-
+  var retryAttempts = 1;
  // generates a fail pipe function that will retry `jqXHR` `times` more times
   function pipeFailRetry(jqXHR, opts) {
     var times = opts.times;
     var timeout = jqXHR.timeout;
+    var onRetry = opts.onRetry;
 
     // takes failure data as input, returns a new deferred
     return function(input, status, msg) {
@@ -31,8 +32,15 @@
 
       // whenever we do make this request, pipe its output to our deferred
       function nextRequest() {
+        var selectedTimeout = (opts.exponential) ? timeout * 2 : opts.timeout;
         $.ajax(ajaxOptions)
-          .retry({times: times - 1, timeout: opts.timeout, statusCodes: opts.statusCodes})
+          .retry({
+            times: times - 1,
+            exponential: opts.exponential,
+            timeout: selectedTimeout,
+            statusCodes: opts.statusCodes,
+            onRetry: onRetry
+          })
           .pipe(output.resolve, output.reject);
       }
 
@@ -52,8 +60,12 @@
             timeout = jqXHR.timeout;
           }
         }
-
+        // there is a timeout and we are going to retry again
         if (timeout !== undefined){
+          if (onRetry) {
+            onRetry(retryAttempts, opts.timeout);
+            retryAttempts = retryAttempts + 1;
+          }
           setTimeout(nextRequest, timeout);
         } else {
           nextRequest();

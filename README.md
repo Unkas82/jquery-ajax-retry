@@ -1,4 +1,4 @@
-# jQuery Ajax Retry
+# Membean - jQuery Ajax Retry
 
 Retry ajax calls using the deferred API
 

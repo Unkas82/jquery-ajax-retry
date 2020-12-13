@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery Ajax Retry Test Suite</title>
+  <!-- Load local jQuery, removing access to $ (use jQuery, not $). -->
+  <script src="../libs/jquery/jquery.js"></script>
+  <script>jQuery.noConflict()</script>
+  <!-- Load local lib and tests. -->
+  <script src="../src/jquery.ajax-retry.js"></script>
+</head>
+<body>
+  <script>
+    jQuery(function($) {
+      //this will try the ajax call three times in total 
+      //if there is no error, the success callbacks will be fired immediately
+      //if there is an error after three attempts, the error callback will be called
+      var options = {
+        url: 'https://httpstat.us/200'
+      };
+
+      var statusOptions = {
+        url: 'https://httpstat.us/503'
+      };
+
+      $.ajax(options).retry({times:3}).then(function(){
+        console.log("success - " + options.url);
+      });  
+
+      // this has the same sematics as above, except will wait 3 seconds between attempts
+      
+      // $.ajax(options).retry({times:3, timeout:3000}).then(function(){
+      //   console.log("success!");
+      // });  
+
+      // this will only retry if the response status code matches the ones we specify
+      
+      // $.ajax(statusOptions).retry({times:3, timeout: 2000, statusCodes: [503, 504]}).then(function(){
+      //   console.log("status success!");
+      // });
+
+      // network call fails -> fire onRetry -> wait X milliseconds -> retry.
+      
+      $.ajax(statusOptions).retry({
+        times: 5,
+        timeout: 1000,
+        // exponential: true,
+        onRetry: function(retries, timeRemaining) {
+          console.log('onRetry', retries, timeRemaining);
+        }
+      })
+    });
+  </script>
+  <h1>jQuery Ajax Retry Test</h1>
+</body>
+</html>

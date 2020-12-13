@@ -231,6 +231,40 @@
     ok(this.requests.length === 2);
   });
 
+  test('exponential timeout is waited before next retry', 5, function() {
+    var def = $.post("/test",{});
+
+    def.retry({
+      times: 4,
+      timeout: 1000,
+      exponential: true
+    });
+
+    ok(this.requests.length === 1);
+    this.requests[0].respond(400, { "Content-Type": "application/json" },
+                                 '{ "id": 11, "comment": "error!" }');
+
+    ok(this.requests.length === 1);
+
+    this.clock.tick(1000);
+
+    ok(this.requests.length === 2);
+    this.requests[1].respond(400, { "Content-Type": "application/json" },
+                                 '{ "id": 11, "comment": "error!" }');
+
+    this.clock.tick(2000);
+
+    ok(this.requests.length === 3);
+    this.requests[1].respond(400, { "Content-Type": "application/json" },
+                                 '{ "id": 11, "comment": "error!" }');
+
+    this.clock.tick(4000);
+
+    ok(this.requests.length === 3);
+    this.requests[1].respond(200, { "Content-Type": "application/json" },
+                                 '{ "id": 12, "comment": "Hey there" }');
+  });
+
   module('jQuery retry uses retry codes', {
     setup: function() {
       this.xhr = sinon.useFakeXMLHttpRequest();
