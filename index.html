@@ -23,9 +23,9 @@
         url: 'https://httpstat.us/503'
       };
 
-      $.ajax(options).retry({times:3}).then(function(){
-        console.log("success - " + options.url);
-      });  
+      // $.ajax(options).retry({times:3}).then(function(){
+      //   console.log("success - " + options.url);
+      // });  
 
       // this has the same sematics as above, except will wait 3 seconds between attempts
       
@@ -42,9 +42,9 @@
       // network call fails -> fire onRetry -> wait X milliseconds -> retry.
       
       $.ajax(statusOptions).retry({
-        times: 5,
+        times: 5, // total number of network calls
         timeout: 1000,
-        // exponential: true,
+        exponential: true,
         onRetry: function(retries, timeRemaining) {
           console.log('onRetry', retries, timeRemaining);
         }

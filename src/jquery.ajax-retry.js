@@ -64,8 +64,8 @@
         if (timeout !== undefined){
           if (onRetry) {
             onRetry(retryAttempts, opts.timeout);
-            retryAttempts = retryAttempts + 1;
           }
+          retryAttempts = retryAttempts + 1;
           setTimeout(nextRequest, timeout);
         } else {
           nextRequest();
