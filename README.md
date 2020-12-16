@@ -5,20 +5,25 @@ Retry ajax calls using the deferred API
 ## Development
 
 cd into working directory
+
 ```cd ~/jquery-ajax-retry```
 
 install deps
+
 ```npm install```
 
 run grunt, this will lint, concat and uglify into ./dist
+
 ```./node_modules/grunt/bin/grunt```
 
 
 ## In Production
 
-Load plugin into page:
+include minified version of plugin in page
 
-[min]: https://raw.githubusercontent.com/membean/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js
+```
+<script src="dist/jquery.ajax-retry.min.js"></script>
+```
 
 ## Usage in exponential mode:
 
@@ -72,7 +77,6 @@ Load plugin into page:
     alert("success!");
   });
 ```
-
 ## Downloads
 
 Download the [production version][min] or the [development version][max].
