@@ -1,27 +1,25 @@
 {
   "name": "jquery.ajax-retry",
-  "title": "jQuery Ajax Retry",
+  "title": "Membean - jQuery Ajax Retry",
   "description": "Retry ajax calls using the deferred API",
   "version": "1.0.0",
-  "homepage": "https://github.com/johnkpaul/jquery-ajax-retry",
+  "homepage": "https://github.com/membean/jquery-ajax-retry",
   "author": {
-    "name": "John Paul",
-    "email": "john@johnkpaul.com",
-    "url": "http://www.johnkpaul.com"
+    "name": "Rick Chen",
+    "email": "rick@membean.com"
   },
   "maintainers": [
     {
-      "name": "John Paul",
-      "email": "john@johnkpaul.com",
-      "url": "http://www.johnkpaul.com"
+      "name": "Rick Chen",
+      "email": "rick@membean.com"
     }
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/johnkpaul/jquery-ajax-retry.git"
+    "url": "git@github.com:membean/jquery-ajax-retry.git"
   },
   "bugs": {
-    "url": "https://github.com/johnkpaul/jquery-ajax-retry/issues"
+    "url": "https://github.com/membean/jquery-ajax-retry/issues"
   },
   "licenses": [
     {
