@@ -2,48 +2,50 @@
 
 Retry ajax calls using the deferred API
 
-## Getting Started
-Download the [production version][min] or the [development version][max].
+## Development
 
-[min]: https://raw.github.com/johnkpaul/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js
-[max]: https://raw.github.com/johnkpaul/jquery-ajax-retry/master/dist/jquery.ajax-retry.js
+cd into working directory
+```cd ~/jquery-ajax-retry```
 
-In your web page:
+install deps
+```npm install```
 
-```html
-<script src="jquery.js"></script>
-<script src="dist/jquery.ajax-retry.min.js"></script>
-<script>
-jQuery(function($) {
-  //this will try the ajax call three times in total 
-  //if there is no error, the success callbacks will be fired immediately
-  //if there is an error after three attempts, the error callback will be called
+run grunt, this will lint, concat and uglify into ./dist
+```./node_modules/grunt/bin/grunt```
 
-  $.ajax(options).retry({times:3}).then(function(){
-    alert("success!");
-  });  
 
-  //this has the same sematics as above, except will wait 3 seconds between attempts
-  $.ajax(options).retry({times:3, timeout:3000}).then(function(){
-    alert("success!");
-  });  
+## In Production
 
-  //this will only retry if the response status code matches the ones we specify
-  $.ajax(options).retry({times:3, statusCodes: [503, 504]}).then(function(){
-    alert("success!");
-  });
-});
-</script>
+Load plugin into page:
+
+[min]: https://raw.githubusercontent.com/membean/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js
+
+Usage:
+
+```
+  // $.ajax options
+  var options = {
+    url: 'https://httpstat.us/200'
+  };
+  $.ajax(options).retry({
+    times: 5, // total number of network calls
+    timeout: 1000,
+    exponential: true,
+    onRetry: function(retries, timeRemaining) {
+      console.log('onRetry', retries, timeRemaining);
+    }
+  })
 ```
 
-## Contributing
-In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [grunt](https://github.com/cowboy/grunt).
+## Downloads
+Download the [production version][min] or the [development version][max].
 
-_Also, please don't edit files in the "dist" subdirectory as they are generated via grunt. You'll find source code in the "src" subdirectory!_
+[min]: https://raw.githubusercontent.com/membean/jquery-ajax-retry/master/dist/jquery.ajax-retry.min.js
+[max]: https://raw.githubusercontent.com/membean/jquery-ajax-retry/master/dist/jquery.ajax-retry.js
+
 
 ## Release History
-_(Nothing yet)_
 
 ## License
-Copyright (c) 2012 John Paul  
+Forked https://github.com/johnkpaul/jquery-ajax-retry  
 Licensed under the MIT license.
