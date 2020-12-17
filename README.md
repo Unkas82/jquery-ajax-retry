@@ -28,11 +28,11 @@ include minified version of plugin in page
 
 The `retry` function is chained to an `$.ajax` call and receives the following arguments:
 
-`exponential` – Whether or not to do exponential backoff when retrying requests (Defaults to `false`).
-`onRetry` - A callback function that will be called on each failure, prior to the delay and subsequent retry. Receives `currentAttempt`, `totalAttempts`, and `msUntilNextAttempt` when triggered.
-`statusCodes` - A list of HTTP status codes that will trigger retries.
-`times` - The total number of Ajax requests to attempt.
-`timeout` - When in normal mode, the number of milliseconds to delay before retrying. In exponential mode, the number of milliseconds of the first delay. For example, in normal mode a value of `1000` will wait one second between each Ajax request. In exponential mode, a value of `1000` will wait 1 second before the first retry, 2 seconds before the second retry, 4 seconds before the third retry, and so on...
+- `exponential` – Whether or not to do exponential backoff when retrying requests (Defaults to `false`).
+- `onRetry` - A callback function that will be called on each failure, prior to the delay and subsequent retry. Receives `currentAttempt`, `totalAttempts`, and `msUntilNextAttempt` when triggered.
+- `statusCodes` - A list of HTTP status codes that will trigger retries.
+- `times` - The total number of Ajax requests to attempt.
+- `timeout` - When in normal mode, the number of milliseconds to delay before retrying. In exponential mode, the number of milliseconds of the first delay. For example, in normal mode a value of `1000` will wait one second between each Ajax request. In exponential mode, a value of `1000` will wait 1 second before the first retry, 2 seconds before the second retry, 4 seconds before the third retry, and so on...
 
 ```javascript
 /* Normal Mode */
