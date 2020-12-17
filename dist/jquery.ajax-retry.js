@@ -15,7 +15,16 @@
       factory(jQuery);
     }
 })(function($) {
-  var attempt = 1;
+  $.ajax = (function ($oldAjax) {
+    // on fail, retry by creating a new Ajax deferred
+    function updateAttempts(opt) {
+      this._attempts = (!this._attempts) ? 1 : this._attempts + 1;
+    }
+    return function (settings) {
+      var a = $oldAjax(settings);
+      return a.always(updateAttempts);
+    };
+  })($.ajax);
  // generates a fail pipe function that will retry `jqXHR` `times` more times
   function pipeFailRetry(jqXHR, opts) {
     var times = opts.times;
@@ -28,6 +37,7 @@
       var ajaxOptions = this;
       var output = new $.Deferred();
       var retryAfter = jqXHR.getResponseHeader('Retry-After');
+      var totalAttempts = (times - 1) + this._attempts;
 
       // whenever we do make this request, pipe its output to our deferred
       function nextRequest() {
@@ -62,16 +72,15 @@
         // there is a timeout and we are going to retry again
         if (timeout !== undefined){
           if (onRetry) {
-            onRetry(attempt, nextAttemptIn);
+            onRetry(this._attempts, totalAttempts, nextAttemptIn);
           }
-          attempt = attempt + 1;
           setTimeout(nextRequest, timeout);
         } else {
           nextRequest();
         }
       } else {
         // no times left, reject our deferred with the current arguments
-        if (onRetry) { onRetry(attempt, 0); }
+        if (onRetry) { onRetry(this._attempts, totalAttempts, null); }
         output.rejectWith(this, arguments);
       }
 
@@ -88,7 +97,9 @@
       if (opts.statusCodes) {
         this.statusCodes = opts.statusCodes;
       }
-      return this.pipe(null, pipeFailRetry(this, opts));
+      return this.pipe(null, pipeFailRetry(this, opts)).done(function() {
+        
+      });
     };
   });
 

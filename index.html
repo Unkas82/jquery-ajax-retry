@@ -40,15 +40,15 @@
       // });
 
       // network call fails -> fire onRetry -> wait X milliseconds -> retry.
-      var TOTAL_ATTEMPTS = 5;
       $.ajax(statusOptions).retry({
-        times: TOTAL_ATTEMPTS, // total number of network calls
-        timeout: 1000,
+        times: 5, // total number of network calls
+        timeout: 250,
         exponential: true,
-        onRetry: function (currentAttempt, msUntilNextAttempt) {
+        onRetry: function (currentAttempt, totalAttempts, msUntilNextAttempt) {
           console.log('currentAttempt', currentAttempt)
           console.log('msUntilNextAttempt', msUntilNextAttempt);
-          console.log('Attempt ' + currentAttempt + ' of ' + TOTAL_ATTEMPTS + ' failed. Retrying again in ' + (msUntilNextAttempt/1000) + ' seconds...')
+          console.log('Attempt ' + currentAttempt + ' of ' + totalAttempts + ' failed.');
+          console.log(' Retrying again in ' + (msUntilNextAttempt/1000) + ' seconds...');
         }
       })
     });
