@@ -1,58 +1,77 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="utf-8">
-  <title>jQuery Ajax Retry Test Suite</title>
-  <!-- Load local jQuery, removing access to $ (use jQuery, not $). -->
-  <script src="../libs/jquery/jquery.js"></script>
-  <script>jQuery.noConflict()</script>
-  <!-- Load local lib and tests. -->
-  <script src="../src/jquery.ajax-retry.js"></script>
-</head>
-<body>
-  <script>
-    jQuery(function($) {
-      //this will try the ajax call three times in total 
-      //if there is no error, the success callbacks will be fired immediately
-      //if there is an error after three attempts, the error callback will be called
-      var options = {
-        url: 'https://httpstat.us/200'
-      };
+  <head>
+    <meta charset="utf-8" />
+    <title>jQuery Ajax Retry Test Suite</title>
+    <!-- Load local jQuery, removing access to $ (use jQuery, not $). -->
+    <script src="../libs/jquery/jquery.js"></script>
+    <script>
+      jQuery.noConflict();
+    </script>
+    <!-- Load local lib and tests. -->
+    <script src="../src/jquery.ajax-retry.js"></script>
+  </head>
+  <body>
+    <script>
+      jQuery(function ($) {
+        /* BASIC USAGE */
 
-      var statusOptions = {
-        url: 'https://httpstat.us/503'
-      };
+        /*
+        $.ajax({
+          url: "https://httpstat.us/200?sleep=2000",
+          timeout: 1000,
+        })
+        .retry({
+          statusCodes: [408], // ONLY retry if these status codes are returned in the response.
+          times: 3, // This is the total number of attempts, NOT the number of retries.
+          timeout: 500, // This is the amount of time before Jquery just says a timeout occurred.
+        })
+        .fail(function (jqxhr, textStatus, errorThrown) {
+          console.log("Status: ", textStatus);
+          console.log("StatusCode: ", jqxhr.status);
+          console.log("Error: ", errorThrown);
+        });
+        */
 
-      // $.ajax(options).retry({times:3}).then(function(){
-      //   console.log("success - " + options.url);
-      // });  
+        /* EXPONENTIAL USAGE */
+        var retryCallback = function (currentAttempt, totalAttempts, msUnitlNextAttempt) {
+          $("#attempts").html(currentAttempt);
+          $("#total").html(totalAttempts);
+          if (msUnitlNextAttempt) {
+            $("#next").html(
+              "Next attempt in " + msUnitlNextAttempt + " milliseconds."
+            );
+          } else {
+            $("#next").html("No more attempts");
+          }
+        };
 
-      // this has the same sematics as above, except will wait 3 seconds between attempts
-      
-      // $.ajax(options).retry({times:3, timeout:3000}).then(function(){
-      //   console.log("success!");
-      // });  
-
-      // this will only retry if the response status code matches the ones we specify
-      
-      // $.ajax(statusOptions).retry({times:3, timeout: 2000, statusCodes: [503, 504]}).then(function(){
-      //   console.log("status success!");
-      // });
-
-      // network call fails -> fire onRetry -> wait X milliseconds -> retry.
-      $.ajax(statusOptions).retry({
-        times: 5, // total number of network calls
-        timeout: 250,
-        exponential: true,
-        onRetry: function (currentAttempt, totalAttempts, msUntilNextAttempt) {
-          console.log('currentAttempt', currentAttempt)
-          console.log('msUntilNextAttempt', msUntilNextAttempt);
-          console.log('Attempt ' + currentAttempt + ' of ' + totalAttempts + ' failed.');
-          console.log(' Retrying again in ' + (msUntilNextAttempt/1000) + ' seconds...');
-        }
-      })
-    });
-  </script>
-  <h1>jQuery Ajax Retry Test</h1>
-</body>
+        $.ajax({
+          url: "https://httpstat.us/408",
+          timeout: 10000,
+        })
+          .retry({
+            exponential: true, // Exponential backoff on retries (defaults to false).
+            onRetry: retryCallback,
+            statusCodes: [408], // ONLY retry if these status codes are returned in the response.
+            times: 3, // This is the total number of attempts, NOT the number of retries.
+            timeout: 1000, // The base delay for the exponential backoff calculations.
+          })
+          .fail(function (jqxhr, textStatus, errorThrown) {
+            $("#next").html("");
+            console.log("Status: ", textStatus);
+            console.log("StatusCode: ", jqxhr.status);
+            console.log("Error: ", errorThrown);
+          });
+      });
+    </script>
+    <h1>jQuery Ajax Retry Test</h1>
+    <p>
+      Attempt
+      <span id="attempts">1</span>
+      of
+      <span id="total"></span>.
+      <span id="next"></span>
+    </p>
+  </body>
 </html>

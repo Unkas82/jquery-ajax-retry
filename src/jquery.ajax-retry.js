@@ -15,6 +15,7 @@
       factory(jQuery);
     }
 })(function($) {
+
   $.ajax = (function ($oldAjax) {
     // on fail, retry by creating a new Ajax deferred
     function updateAttempts(opt) {
@@ -25,6 +26,7 @@
       return a.always(updateAttempts);
     };
   })($.ajax);
+
  // generates a fail pipe function that will retry `jqXHR` `times` more times
   function pipeFailRetry(jqXHR, opts) {
     var times = opts.times;
@@ -80,7 +82,9 @@
         }
       } else {
         // no times left, reject our deferred with the current arguments
-        if (onRetry) { onRetry(this._attempts, totalAttempts, null); }
+        if (onRetry) { 
+          onRetry(this._attempts, totalAttempts, null);
+        }
         output.rejectWith(this, arguments);
       }
 
@@ -97,9 +101,7 @@
       if (opts.statusCodes) {
         this.statusCodes = opts.statusCodes;
       }
-      return this.pipe(null, pipeFailRetry(this, opts)).done(function() {
-        
-      });
+      return this.pipe(null, pipeFailRetry(this, opts));
     };
   });
 
